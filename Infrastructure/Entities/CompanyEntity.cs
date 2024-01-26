@@ -12,4 +12,6 @@ public class CompanyEntity
     [Column(TypeName = "nvarchar(50)")]
     public string CompanyName { get; set; } = null!;
 
+    public virtual ICollection<CustomerEntity> Customer { get; set; } = new HashSet<CustomerEntity>();
+
 }
