@@ -1,7 +1,6 @@
 ﻿using Infrastructure.Contexts;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
@@ -62,15 +61,60 @@ public class CustomerRepository(DataContext context) : BaseRepositories<Customer
         return null!;
     }
 
-    public override Task<CustomerEntity> UpdateAsync(Expression<Func<CustomerEntity, bool>> expression, CustomerEntity newEntity)
+    public override async Task<CustomerEntity> UpdateAsync(Expression<Func<CustomerEntity, bool>> expression, CustomerEntity newEntity)
     {
-        return base.UpdateAsync(expression, newEntity);
+        try
+        {
+            var existingEntity = await _context.Customers
+           .Include(i => i.CustomerAddress)
+           .Include(i => i.CustomerContact)
+           .Include(i => i.Company)
+           .Include(i => i.Role)
+           .FirstOrDefaultAsync();
+
+            if (existingEntity != null)
+            {
+                existingEntity.CustomerContact.Email = newEntity.CustomerContact.Email;
+
+                await _context.SaveChangesAsync();
+
+                return existingEntity;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Write("ERROR :: " + ex.Message);
+        }
+
+        return null!;
     }
 
-    public override Task<bool> DeleteAsync(Expression<Func<CustomerEntity, bool>> expression)
+    public override async Task<bool> DeleteAsync(Expression<Func<CustomerEntity, bool>> expression)
     {
-        return base.DeleteAsync(expression);
-    }
+        try
+        {
+            var existingEntity = await _context.Customers
+                .Include(i => i.CustomerAddress)
+                .Include(i => i.CustomerContact)
+                .Include(i => i.Company)
+                .Include(i => i.Role)
+                .FirstOrDefaultAsync(expression);
+
+            if (existingEntity != null)
+            {
+                _context.Customers.Remove(existingEntity);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
+        }
+
+        return false;
+    }   
 }
 
 

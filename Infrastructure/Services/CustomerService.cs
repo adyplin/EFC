@@ -9,7 +9,7 @@ public class CustomerService(CustomerRepository customerRepository, CustomerCont
 
     public bool CreateCustomer(string Email, CustomerEntity customerEntity)
     {
-        var _customerEntity = _customerContactRepository.GetOne(x => x.Email == Email);
+        var _customerEntity = _customerContactRepository.GetOneAsync(x => x.Email == Email);
 
         if (customerEntity != null)
         {
