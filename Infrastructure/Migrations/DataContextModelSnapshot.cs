@@ -160,7 +160,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Entities.CustomerEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.CompanyEntity", "Company")
-                        .WithMany()
+                        .WithMany("Customer")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -174,6 +174,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.CompanyEntity", b =>
+                {
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.CustomerEntity", b =>

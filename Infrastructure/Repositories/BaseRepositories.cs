@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
@@ -13,50 +14,61 @@ public abstract class BaseRepositories<TEntity> where TEntity : class
         _context = context;
     }
 
-    public virtual TEntity Create(TEntity entity)
+    public virtual async Task <TEntity> CreateAsync(TEntity entity)
     {
         try
         {
             _context.Set<TEntity>().Add(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return entity;
         }
         catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
         return null!;
     }
 
-    public virtual IEnumerable<TEntity> GetAll() 
-    {
-        try
-        {
-           return _context.Set<TEntity>().ToList();
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
-        return null!;
-    }
 
-    public virtual TEntity GetOne(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task <TEntity> GetOneAsync(Expression<Func<TEntity, bool>> expression)
     {
         try
         {
-            return _context.Set<TEntity>().FirstOrDefault(predicate, null!);
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
-        return null!;
-    }
-
-    public virtual TEntity Update(TEntity entity)
-    {
-        try
-        {
-            var entityToUpdate = _context.Set<TEntity>().Find(entity);
-            if (entityToUpdate != null)
+            var existingEntity = await _context.Set<TEntity>().FirstOrDefaultAsync(expression);
+            if (existingEntity != null)
             {
-                entityToUpdate = entity;
-                _context.Set<TEntity>().Update(entityToUpdate);
-                _context.SaveChanges();
+                return existingEntity;
+            }
+        }
+        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
+        return null!;
+    }
 
-                return entityToUpdate;
+
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+    {
+        try
+        {
+            var existingEntities = await _context.Set<TEntity>().ToListAsync();
+            if (existingEntities != null)
+            {
+                return existingEntities;
+            }
+        }
+        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
+        return null!;
+    }
+
+
+
+    public virtual async Task<TEntity> UpdateAsync(Expression<Func<TEntity, bool>> expression, TEntity newEntity)
+    {
+        try
+        {
+            var existingEntity = await _context.Set<TEntity>().FirstOrDefaultAsync(expression);
+            if (existingEntity != null)
+            {
+                _context.Entry(existingEntity).CurrentValues.SetValues(newEntity);
+                await _context.SaveChangesAsync();
+
+                return existingEntity;
 
             }
         }
@@ -64,15 +76,15 @@ public abstract class BaseRepositories<TEntity> where TEntity : class
         return null!;
     }
 
-    public virtual bool Delete(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> expression)
     {
         try
         {
-            var entity = _context.Set<TEntity>().FirstOrDefault(predicate);
-            if (entity != null)
+            var existingEntity = await _context.Set<TEntity>().FirstOrDefaultAsync(expression);
+            if (existingEntity != null)
             {
-                _context.Set<TEntity>().Remove(entity);
-                _context.SaveChanges();
+                _context.Set<TEntity>().Remove(existingEntity);
+                await _context.SaveChangesAsync();
 
                 return true;
 
@@ -82,11 +94,13 @@ public abstract class BaseRepositories<TEntity> where TEntity : class
         return false;
     }
 
-    public virtual bool Exists(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task<bool> ExistingAsync(Expression<Func<TEntity, bool>> expression)
     {
         try
         {
-            return _context.Set<TEntity>().Any(predicate);
+            var existing = await _context.Set<TEntity>().AnyAsync(expression);
+
+            return existing;
         }
         catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
         return false;
