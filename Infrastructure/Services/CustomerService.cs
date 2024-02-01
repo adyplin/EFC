@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repositories;
+using System.Diagnostics;
 namespace Infrastructure.Services;
 
 public class CustomerService(CustomerRepository customerRepository, CustomerContactRepository customerContactRepository)
@@ -7,25 +8,36 @@ public class CustomerService(CustomerRepository customerRepository, CustomerCont
     private readonly CustomerRepository _customerRepository = customerRepository;
     private readonly CustomerContactRepository _customerContactRepository = customerContactRepository;
 
-    public bool CreateCustomer(string Email, CustomerEntity customerEntity)
+    public async Task<bool> CreateContactAsync(CustomerEntity customer, string firstName, string lastName, string street, string city, string zipCode, string country, string email, string phoneNumber, string companyName, string roleName)
     {
-        var _customerEntity = _customerContactRepository.GetOneAsync(x => x.Email == Email);
-
-        if (customerEntity != null)
+        try
         {
-            var newCustomer = new CustomerEntity
+            var existingCustomer = await _customerContactRepository.GetOneAsync(x => x.Email == email);
+             
+            if (existingCustomer == null && customer != null)
             {
-                FirstName = customerEntity.FirstName,
-                LastName = customerEntity.LastName,
-                CustomerAddress = customerEntity.CustomerAddress,
-                CustomerContact = new CustomerContactEntity { Email = Email },
-                Role = customerEntity.Role,
-                Company = customerEntity.Company,
-            };
+                var newCustomer = new CustomerEntity
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    CustomerAddress = new CustomerAddressEntity { Street = street, City = city, ZipCode = zipCode, Country = country },
+                    CustomerContact = new CustomerContactEntity { Email = email, PhoneNumber = phoneNumber, },
+                    Role = new RoleEntity { RoleName = roleName },
+                    Company = new CompanyEntity { CompanyName = companyName }
 
-            var result = _customerRepository.Create(newCustomer);
-            return result != null;
+                };
+
+                var result = await _customerRepository.CreateAsync(newCustomer);
+
+                return result != null;
+            }
+        } 
+        catch (Exception ex) 
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
         }
         return false;
     }
+
+
 }
