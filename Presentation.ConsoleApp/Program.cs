@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Contexts;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,5 +14,11 @@ services.AddScoped<CustomerAddressRepository>();
 services.AddScoped<CustomerContactRepository>();
 services.AddScoped<RoleRepository>();
 services.AddScoped<CompanyRepository>();
+services.AddScoped<CustomerService>();
+
+services.AddSingleton<MenuService>();
 
 }).Build();
+
+var menuService = builder.Services.GetRequiredService<MenuService>();
+menuService.ShowMainMenu();

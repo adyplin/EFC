@@ -8,36 +8,36 @@ public class CustomerService(CustomerRepository customerRepository, CustomerCont
     private readonly CustomerRepository _customerRepository = customerRepository;
     private readonly CustomerContactRepository _customerContactRepository = customerContactRepository;
 
-    public async Task<bool> CreateContactAsync(CustomerEntity customer, string firstName, string lastName, string street, string city, string zipCode, string country, string email, string phoneNumber, string companyName, string roleName)
-    {
-        try
+        public async Task<bool> CreateContactAsync(CustomerEntity customer, string firstName, string lastName, string street, string city, string zipCode, string country, string email, string phoneNumber, string companyName, string roleName)
         {
-            var existingCustomer = await _customerContactRepository.GetOneAsync(x => x.Email == email);
-             
-            if (existingCustomer == null && customer != null)
+            try
             {
-                var newCustomer = new CustomerEntity
+                var existingCustomer = await _customerContactRepository.GetOneAsync(x => x.Email == email);
+             
+                if (existingCustomer == null && customer != null)
                 {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    CustomerAddress = new CustomerAddressEntity { Street = street, City = city, ZipCode = zipCode, Country = country },
-                    CustomerContact = new CustomerContactEntity { Email = email, PhoneNumber = phoneNumber, },
-                    Role = new RoleEntity { RoleName = roleName },
-                    Company = new CompanyEntity { CompanyName = companyName }
+                    var newCustomer = new CustomerEntity
+                    {
+                        FirstName = firstName,
+                        LastName = lastName,
+                        CustomerAddress = new CustomerAddressEntity { Street = street, City = city, ZipCode = zipCode, Country = country },
+                        CustomerContact = new CustomerContactEntity { Email = email, PhoneNumber = phoneNumber, },
+                        Role = new RoleEntity { RoleName = roleName },
+                        Company = new CompanyEntity { CompanyName = companyName }
 
-                };
+                    };
 
-                var result = await _customerRepository.CreateAsync(newCustomer);
+                    var result = await _customerRepository.CreateAsync(newCustomer);
 
-                return result != null;
+                    return result != null;
+                }
+            } 
+            catch (Exception ex) 
+            {
+                Debug.WriteLine("ERROR :: " + ex.Message);
             }
-        } 
-        catch (Exception ex) 
-        {
-            Debug.WriteLine("ERROR :: " + ex.Message);
+            return false;
         }
-        return false;
-    }
 
     public async Task<CustomerEntity> GetOneCustomerAsync(string email)
     {

@@ -38,16 +38,16 @@ public class CustomerRepository(DataContext context) : BaseRepositories<Customer
     {
         try
         {
-            var existingEntity = await _context.Customers
+            var existingEntities = await _context.Customers
                 .Include(i => i.Company)
                 .Include(i => i.Role)
                 .Include(i => i.CustomerContact)
                 
                 .ToListAsync();
 
-            if (existingEntity != null)
+            if (existingEntities != null)
             {
-                return existingEntity;
+                return existingEntities;
             }
         }
         catch (Exception ex)
