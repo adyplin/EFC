@@ -3,6 +3,7 @@ using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Presentation.ConsoleApp.Service;
 
 var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
 {
@@ -13,5 +14,6 @@ var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
     services.AddScoped<CustomerContactRepository>();
     services.AddScoped<RoleRepository>();
     services.AddScoped<CompanyRepository>();
+    services.AddSingleton<MenuService>();
 
 }).Build();
