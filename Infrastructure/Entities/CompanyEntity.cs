@@ -13,6 +13,6 @@ public class CompanyEntity
     public string CompanyName { get; set; } = null!;
 
     public virtual ICollection<CustomerEntity> Customer { get; set; } = new HashSet<CustomerEntity>();
-    public virtual RoleEntity Role { get; set; } = null!;
+
 
 }

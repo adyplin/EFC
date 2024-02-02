@@ -16,14 +16,10 @@ public class CustomerRepository(DataContext context) : BaseRepositories<Customer
         try
         {
             var existingEntity = await _context.Customers
-                .Include(i => i.Company).ThenInclude(i => i.CompanyName)
-                .Include(i => i.Role).ThenInclude(i => i.RoleName)
-                .Include(i => i.CustomerAddress).ThenInclude(i => i.Street)
-                .Include(i => i.CustomerAddress).ThenInclude(i => i.City)
-                .Include(i => i.CustomerAddress).ThenInclude(i => i.ZipCode)
-                .Include(i => i.CustomerAddress).ThenInclude(i => i.Country)
-                .Include(i => i.CustomerContact).ThenInclude(i => i.Email)
-                .Include(i => i.CustomerContact).ThenInclude(i => i.PhoneNumber)
+                .Include(i => i.Company)
+                .Include(i => i.Role)
+                .Include(i => i.CustomerAddress)
+                .Include(i => i.CustomerContact)
                 .FirstOrDefaultAsync(expression);
 
             if (existingEntity != null)
@@ -43,9 +39,9 @@ public class CustomerRepository(DataContext context) : BaseRepositories<Customer
         try
         {
             var existingEntity = await _context.Customers
-                .Include(i => i.Company).ThenInclude(i => i.CompanyName)
-                .Include(i => i.Role).ThenInclude(i => i.RoleName)
-                .Include(i => i.CustomerContact).ThenInclude(i => i.Email)
+                .Include(i => i.Company)
+                .Include(i => i.Role)
+                .Include(i => i.CustomerContact)
                 
                 .ToListAsync();
 

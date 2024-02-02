@@ -16,7 +16,7 @@ public class CompanyRepository(DataContext context) : BaseRepositories<CompanyEn
         try
         {
             var existingEntity = await _context.Companies
-                .Include(i => i.Role).ThenInclude(i => i.RoleName)
+               
                 .Include(i => i.Customer).ThenInclude(i => i.FirstName)
                 .Include(i => i.Customer).ThenInclude(i => i.LastName)
 
@@ -38,7 +38,11 @@ public class CompanyRepository(DataContext context) : BaseRepositories<CompanyEn
     {
         try
         {
-            var existingEntity = await _context.Companies.ToListAsync();
+            var existingEntity = await _context.Companies
+                .Include(i => i.Customer).ThenInclude(i => i.FirstName)
+                .Include(i => i.Customer).ThenInclude(i => i.LastName)
+
+                .ToListAsync();
 
             if (existingEntity != null)
             {

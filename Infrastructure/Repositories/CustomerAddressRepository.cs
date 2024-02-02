@@ -15,8 +15,8 @@ public class CustomerAddressRepository(DataContext context) : BaseRepositories<C
         try
         {
             var existingEntity = await _context.CustomerAddresses
-                .Include(i => i.Customer).ThenInclude(i => i.FirstName)
-                .Include(i => i.Customer).ThenInclude(i => i.LastName)
+                .Include(i => i.Customer)
+                .Include(i => i.Customer)
 
                 .FirstOrDefaultAsync(expression);
 
