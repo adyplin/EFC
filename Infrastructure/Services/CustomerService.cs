@@ -3,36 +3,40 @@ using Infrastructure.Repositories;
 using System.Diagnostics;
 namespace Infrastructure.Services;
 
-public class CustomerService(CustomerRepository customerRepository, CustomerContactRepository customerContactRepository)
+public class CustomerService(CustomerRepository customerRepository, CustomerContactRepository customerContactRepository, CompanyService companyService, RoleService roleService)
 {
     private readonly CustomerRepository _customerRepository = customerRepository;
     private readonly CustomerContactRepository _customerContactRepository = customerContactRepository;
+    private readonly CompanyService _companyService = companyService;
+    private readonly RoleService _roleService = roleService;
 
-        public async Task<bool> CreateContactAsync(CustomerEntity customer, string firstName, string lastName, string street, string city, string zipCode, string country, string email, string phoneNumber, string companyName, string roleName)
+    public async Task<bool> CreateContactAsync(CustomerEntity customer, string firstName, string lastName, string street, string city, string zipCode, string country, string email, string phoneNumber, string companyName, string roleName)
         {
-            try
+        try
+        {
+            var existingCustomer = await _customerContactRepository.GetOneAsync(x => x.Email == email);
+
+            if (existingCustomer == null && customer != null)
             {
-                var existingCustomer = await _customerContactRepository.GetOneAsync(x => x.Email == email);
-             
-                if (existingCustomer == null && customer != null)
+                var company = await _companyService.CreateCompanyAsync(companyName);
+                var role = await _roleService.CreateRoleAsync(roleName);
+
+                var newCustomer = new CustomerEntity
                 {
-                    var newCustomer = new CustomerEntity
-                    {
-                        FirstName = firstName,
-                        LastName = lastName,
-                        CustomerAddress = new CustomerAddressEntity { Street = street, City = city, ZipCode = zipCode, Country = country },
-                        CustomerContact = new CustomerContactEntity { Email = email, PhoneNumber = phoneNumber, },
-                        Role = new RoleEntity { RoleName = roleName },
-                        Company = new CompanyEntity { CompanyName = companyName }
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName,
+                    CustomerAddress = new CustomerAddressEntity { Street = street, ZipCode = zipCode, City = city, Country = country },
+                    CustomerContact = new CustomerContactEntity { Email = email, PhoneNumber = phoneNumber },
+                    RoleId = role.RoleId,
+                    CompanyId = company.CompanyId
+                };
 
-                    };
+                var result = await _customerRepository.CreateAsync(newCustomer);
 
-                    var result = await _customerRepository.CreateAsync(newCustomer);
-
-                    return result != null;
-                }
-            } 
-            catch (Exception ex) 
+                return result != null;
+            }
+        }
+        catch (Exception ex) 
             {
                 Debug.WriteLine("ERROR :: " + ex.Message);
             }

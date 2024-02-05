@@ -10,13 +10,36 @@ public class RoleRepository(DataContext context) : BaseRepositories<RoleEntity>(
 {
     private readonly DataContext _context = context;
 
+    public async override Task<RoleEntity> CreateAsync(RoleEntity entity)
+    {
+        try
+        {
+            var existingRole = await _context.Roles.FirstOrDefaultAsync(i => i.RoleName == entity.RoleName);
+
+            if (existingRole != null)
+            {
+                return existingRole;
+            }
+
+            _context.Roles.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
+            return null!;
+        }
+    }
+
     public override async Task<IEnumerable<RoleEntity>> GetAllAsync()
     {
         try
         {
             var existingEntities = await _context.Roles
-                .Include(i => i.Customer).ThenInclude(i => i.FirstName)
-                .Include(i => i.Customer).ThenInclude(i => i.LastName)
+                .Include(i => i.Customer)
+                .Include(i => i.Customer)
                 .ToListAsync();
 
             if (existingEntities != null)
@@ -37,8 +60,8 @@ public class RoleRepository(DataContext context) : BaseRepositories<RoleEntity>(
         try
         {
             var existingEntity = await _context.Roles
-                .Include(i => i.Customer).ThenInclude(i => i.FirstName)
-                .Include(i => i.Customer).ThenInclude(i => i.LastName)
+                .Include(i => i.Customer)
+                .Include(i => i.Customer)
                 .FirstOrDefaultAsync();
 
             if (existingEntity != null)

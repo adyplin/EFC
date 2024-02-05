@@ -10,6 +10,29 @@ public class CompanyRepository(DataContext context) : BaseRepositories<CompanyEn
 {
     private readonly DataContext _context = context;
 
+    public async override Task<CompanyEntity> CreateAsync(CompanyEntity entity)
+    {
+        try
+        {
+            var existingCompany = await _context.Companies.FirstOrDefaultAsync(i => i.CompanyName == entity.CompanyName);
+
+            if (existingCompany != null)
+            {
+                return existingCompany;
+            }
+
+            _context.Companies.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
+            return null!;
+        }
+    }
+
 
     public override async Task<CompanyEntity> GetOneAsync(Expression<Func<CompanyEntity, bool>> expression)
     {
@@ -17,8 +40,8 @@ public class CompanyRepository(DataContext context) : BaseRepositories<CompanyEn
         {
             var existingEntity = await _context.Companies
                
-                .Include(i => i.Customer).ThenInclude(i => i.FirstName)
-                .Include(i => i.Customer).ThenInclude(i => i.LastName)
+                .Include(i => i.Customer)
+                .Include(i => i.Customer)
 
                 .FirstOrDefaultAsync(expression);
 
@@ -39,8 +62,8 @@ public class CompanyRepository(DataContext context) : BaseRepositories<CompanyEn
         try
         {
             var existingEntity = await _context.Companies
-                .Include(i => i.Customer).ThenInclude(i => i.FirstName)
-                .Include(i => i.Customer).ThenInclude(i => i.LastName)
+                .Include(i => i.Customer)
+                .Include(i => i.Customer)
 
                 .ToListAsync();
 
@@ -55,4 +78,5 @@ public class CompanyRepository(DataContext context) : BaseRepositories<CompanyEn
         }
         return null!;
     }
+
 }
