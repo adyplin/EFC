@@ -35,6 +35,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("CompanyId");
 
+                    b.HasIndex("CompanyName")
+                        .IsUnique();
+
                     b.ToTable("Companies");
                 });
 

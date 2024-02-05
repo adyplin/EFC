@@ -15,6 +15,8 @@ public partial class DataContext(DbContextOptions<DataContext> options) : DbCont
     {
         modelBuilder.Entity<RoleEntity>().HasIndex(x => x.RoleName).IsUnique();
 
+        modelBuilder.Entity<CompanyEntity>().HasIndex(x => x.CompanyName).IsUnique();
+
         modelBuilder.Entity<CustomerContactEntity>().HasIndex(x => x.Email).IsUnique();
     }
 }

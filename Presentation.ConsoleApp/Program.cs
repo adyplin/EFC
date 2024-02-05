@@ -8,15 +8,17 @@ using Presentation.ConsoleApp.Service;
 
 var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
 {
-services.AddDbContext<DataContext>(x => x.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Projects-Education\EFC\Infrastructure\Data\local_database.mdf;Integrated Security=True;Connect Timeout=30"));
-services.AddScoped<CustomerRepository>();
-services.AddScoped<CustomerAddressRepository>();
-services.AddScoped<CustomerContactRepository>();
-services.AddScoped<RoleRepository>();
-services.AddScoped<CompanyRepository>();
-services.AddScoped<CustomerService>();
+    services.AddDbContext<DataContext>(x => x.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Projects-Education\EFC\Infrastructure\Data\local_database.mdf;Integrated Security=True;Connect Timeout=30"));
+    services.AddScoped<CustomerRepository>();
+    services.AddScoped<CustomerAddressRepository>();
+    services.AddScoped<CustomerContactRepository>();
+    services.AddScoped<RoleRepository>();
+    services.AddScoped<CompanyRepository>();
+    services.AddScoped<CustomerService>();
+    services.AddScoped<CompanyService>();
+    services.AddScoped<RoleService>();
 
-services.AddSingleton<MenuService>();
+    services.AddSingleton<MenuService>();
 
 }).Build();
 

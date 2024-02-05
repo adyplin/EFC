@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240202154009_Adding_Customer_Tables")]
+    [Migration("20240205115530_Adding_Customer_Tables")]
     partial class Adding_Customer_Tables
     {
         /// <inheritdoc />
@@ -37,6 +37,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("CompanyId");
+
+                    b.HasIndex("CompanyName")
+                        .IsUnique();
 
                     b.ToTable("Companies");
                 });

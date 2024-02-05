@@ -105,6 +105,12 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Companies_CompanyName",
+                table: "Companies",
+                column: "CompanyName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CustomerContacts_Email",
                 table: "CustomerContacts",
                 column: "Email",
