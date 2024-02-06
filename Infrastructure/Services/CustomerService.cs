@@ -97,20 +97,6 @@ public class CustomerService(CustomerRepository customerRepository, CustomerCont
                 existingCustomer.CustomerAddress = updatedCustomer.CustomerAddress;
                 existingCustomer.CustomerContact = updatedCustomer.CustomerContact;
 
-                if (updatedCustomer.Role.RoleName != null)
-                {
-                    var newRole = await _roleService.CreateRoleAsync(updatedCustomer.Role.RoleName);
-                    existingCustomer.RoleId = newRole.RoleId;
-                }
-
-                if (updatedCustomer.Company.CompanyName != null)
-                {
-                    var newCompany = await _companyService.CreateCompanyAsync(updatedCustomer.Company.CompanyName);
-                    existingCustomer.CompanyId = newCompany.CompanyId;
-
-                }
-
-
                 var result = await _customerRepository.UpdateAsync(x => x.CustomerId == existingCustomer.CustomerId, existingCustomer);
 
                 return result != null;

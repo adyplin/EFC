@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Services;
-using System.Diagnostics.Eventing.Reader;
 
 namespace Presentation.ConsoleApp.Service;
 
@@ -13,15 +12,15 @@ public class MenuService(CustomerService customerService)
     {
         while (true)
         {
-            DisplayMenuTitle("Menu Option");
-            Console.WriteLine($"{"1.",-3} Add a new customer");
-            Console.WriteLine($"{"2.",-3} View the customer list");
-            Console.WriteLine($"{"3.",-3} View detailed information about a customer");
-            Console.WriteLine($"{"4.",-3} Update a customer");
-            Console.WriteLine($"{"5.",-3} Remove a customer");
-            Console.WriteLine($"{"0.",-3} Exit the application");
+            DisplayMenuTitle("# Menu Option #");
+            Console.WriteLine($"{"1.",-2} Add a new customer");
+            Console.WriteLine($"{"2.",-2} View the customer list");
+            Console.WriteLine($"{"3.",-2} View detailed information about a customer");
+            Console.WriteLine($"{"4.",-2} Update a customer");
+            Console.WriteLine($"{"5.",-2} Remove a customer");
+            Console.WriteLine($"{"0.",-2} Exit the application");
             Console.WriteLine();
-            Console.Write("Enter menu option: ");
+            Console.Write("\nEnter menu option: ");
 
             int option;
 
@@ -159,10 +158,10 @@ public class MenuService(CustomerService customerService)
             foreach (var customer in customers)
             {
                 
-                Console.WriteLine($"{customer.Company.CompanyName}");
-                Console.WriteLine($"{customer.Role.RoleName}");
-                Console.WriteLine($"{customer.FirstName} {customer.LastName}");
-                Console.WriteLine($"{customer.CustomerContact.Email}");
+                Console.WriteLine($" {customer.Company.CompanyName}");
+                Console.WriteLine($" {customer.Role.RoleName}");
+                Console.WriteLine($" {customer.FirstName} {customer.LastName}");
+                Console.WriteLine($" {customer.CustomerContact.Email}");
                 Console.WriteLine();
             }
         }
@@ -190,14 +189,14 @@ public class MenuService(CustomerService customerService)
             if (customer != null)
             {
                 Console.Clear();
-                Console.WriteLine($"{"0.",-2} {customer.Company.CompanyName}");
-                Console.WriteLine($"{"0.",-2}{customer.Role.RoleName}");
-                Console.WriteLine($"{"0.",-2}{customer.FirstName} {customer.LastName}");
-                Console.WriteLine($"{"0.",-2}{customer.CustomerContact.Email}");
-                Console.WriteLine($"{"0.",-2}{customer.CustomerContact.PhoneNumber}");
-                Console.WriteLine($"{"0.",-2}{customer.CustomerAddress.Street}");
-                Console.WriteLine($"{"0.",-2}{customer.CustomerAddress.ZipCode} {customer.CustomerAddress.City}");
-                Console.WriteLine($"{"0.",-2}{customer.CustomerAddress.Country}");
+                Console.WriteLine($"{"Company.",-4} {customer.Company.CompanyName}");
+                Console.WriteLine($"{"Role.",-4} {customer.Role.RoleName}");
+                Console.WriteLine($"{"Name.",-4} {customer.FirstName} {customer.LastName}");
+                Console.WriteLine($"{"Email.",-4} {customer.CustomerContact.Email}");
+                Console.WriteLine($"{"Number.",-4} {customer.CustomerContact.PhoneNumber}");
+                Console.WriteLine($"{"Address.",-4} {customer.CustomerAddress.Street}");
+                Console.WriteLine($"{"Zipcode.",-4} {customer.CustomerAddress.ZipCode} {customer.CustomerAddress.City}");
+                Console.WriteLine($"{"Country.",-4} {customer.CustomerAddress.Country}");
             }
             else
             {
@@ -227,12 +226,6 @@ public class MenuService(CustomerService customerService)
             if (existingCustomer != null)
             {
                 Console.Clear();
-                Console.Write("Enter new company name: ");
-                existingCustomer.Company.CompanyName = Console.ReadLine()!;
-
-                Console.Write("Enter new role name: ");
-                existingCustomer.Role.RoleName = Console.ReadLine()!;
-
                 Console.Write("Enter new First name: ");
                 existingCustomer.FirstName = Console.ReadLine()!;
 
