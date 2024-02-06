@@ -11,7 +11,7 @@ public class CustomerService(CustomerRepository customerRepository, CustomerCont
     private readonly RoleService _roleService = roleService;
 
     public async Task<bool> CreateContactAsync(CustomerEntity customer, string firstName, string lastName, string street, string city, string zipCode, string country, string email, string phoneNumber, string companyName, string roleName)
-        {
+    {
         try
         {
             var existingCustomer = await _customerContactRepository.GetOneAsync(x => x.Email == email);
@@ -35,13 +35,14 @@ public class CustomerService(CustomerRepository customerRepository, CustomerCont
 
                 return result != null;
             }
+            else { }
         }
-        catch (Exception ex) 
-            {
-                Debug.WriteLine("ERROR :: " + ex.Message);
-            }
-            return false;
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
         }
+        return false;
+    }
 
     public async Task<CustomerEntity> GetOneCustomerAsync(string email)
     {
@@ -88,17 +89,27 @@ public class CustomerService(CustomerRepository customerRepository, CustomerCont
             var existingCustomer = await _customerRepository.GetOneAsync(x => x.CustomerContact.Email == email);
 
             if (existingCustomer != null)
-            {
-                {
-                    existingCustomer.FirstName = updatedCustomer.FirstName;
-                    existingCustomer.LastName = updatedCustomer.LastName;
-                    existingCustomer.CustomerAddress = updatedCustomer.CustomerAddress;
-                    existingCustomer.CustomerContact = updatedCustomer.CustomerContact;
-                    existingCustomer.Role = updatedCustomer.Role;
-                    existingCustomer.Company = updatedCustomer.Company;
-                };
 
-                existingCustomer.CustomerContact.Email = email;
+            {
+
+                existingCustomer.FirstName = updatedCustomer.FirstName;
+                existingCustomer.LastName = updatedCustomer.LastName;
+                existingCustomer.CustomerAddress = updatedCustomer.CustomerAddress;
+                existingCustomer.CustomerContact = updatedCustomer.CustomerContact;
+
+                if (updatedCustomer.Role.RoleName != null)
+                {
+                    var newRole = await _roleService.CreateRoleAsync(updatedCustomer.Role.RoleName);
+                    existingCustomer.RoleId = newRole.RoleId;
+                }
+
+                if (updatedCustomer.Company.CompanyName != null)
+                {
+                    var newCompany = await _companyService.CreateCompanyAsync(updatedCustomer.Company.CompanyName);
+                    existingCustomer.CompanyId = newCompany.CompanyId;
+
+                }
+
 
                 var result = await _customerRepository.UpdateAsync(x => x.CustomerId == existingCustomer.CustomerId, existingCustomer);
 

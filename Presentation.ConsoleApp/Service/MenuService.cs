@@ -65,13 +65,6 @@ public class MenuService(CustomerService customerService)
                         break;
                 }
             }
-
-            else
-            {
-                Console.WriteLine("\nInvalid input. Please enter a number.");
-                Console.ReadKey();
-            }
-
         }
     }
 

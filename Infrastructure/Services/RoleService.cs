@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Infrastructure.Services;
@@ -19,7 +20,6 @@ public class RoleService(RoleRepository roleRepository)
                 var newRole = new RoleEntity { RoleName = roleName };
 
                 var result = await _roleRepository.CreateAsync(newRole);
-
                 return result;
             }
             else
@@ -33,4 +33,5 @@ public class RoleService(RoleRepository roleRepository)
             return null!;
         }
     }
+
 }

@@ -71,6 +71,8 @@ public class CustomerRepository(DataContext context) : BaseRepositories<Customer
             if (existingEntity != null)
             {
                 existingEntity.CustomerContact.Email = newEntity.CustomerContact.Email;
+                existingEntity.CompanyId = newEntity.CompanyId;
+                existingEntity.RoleId = newEntity.RoleId;
 
                 await _context.SaveChangesAsync();
 
